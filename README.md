@@ -74,6 +74,8 @@ Done in 5.10s.
 
 ### RESULTS_FILE = filepath to save results data. Default is 'results.txt'.
 
+### RESULTS_SAVE_FLOAT = if true, results will be saved as floats, else, as integers. Default is false
+
 ### ERRORS_SHOW = on true when some expression will be defined as invalid, message will be shown by console.error method. On false, app will not notify you. Default is false
 
 ### ACCEPT_SIMPLE = on true, expressions like "2", "+4", "454+", be valid. Default is false.

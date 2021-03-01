@@ -5,6 +5,7 @@ const config = {
   ACCEPT_NEGATIVE: false,
   ACCEPT_SIMPLE: false,
   RESULTS_FILE: 'results.txt',
+  RESULTS_SAVE_FLOAT: false,
   ERRORS_SHOW: false
 }
 

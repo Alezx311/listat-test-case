@@ -1,7 +1,15 @@
 //* Default module, async version for shorter functions
 const fs = require('fs').promises
 //* Values can be changed
-const { MAX_NUMBER, ACCEPT_ZERO, ACCEPT_NEGATIVE, ACCEPT_SIMPLE, RESULTS_FILE, ERRORS_SHOW } = require('./config')
+const {
+  MAX_NUMBER,
+  ACCEPT_ZERO,
+  ACCEPT_NEGATIVE,
+  ACCEPT_SIMPLE,
+  RESULTS_FILE,
+  RESULTS_SAVE_FLOAT,
+  ERRORS_SHOW
+} = require('./config')
 
 class Helpers {
   static saveResults = async (data = '') => await fs.writeFile(`./${RESULTS_FILE}`, data)
@@ -51,7 +59,13 @@ class Helpers {
   static evalExp = str => {
     if (this.checkExp(str) && this.checkNumbers(str)) {
       const func = new Function('', `return ${str}`)
-      return Number(func()).toFixed(0)
+      const result = Number(func())
+
+      if (RESULTS_SAVE_FLOAT) {
+        return result.toFixed(2)
+      } else {
+        return result.toFixed(0)
+      }
     } else {
       throw new Error(`${str} -> Invalid expression`)
     }
