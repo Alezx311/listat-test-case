@@ -1,64 +1,65 @@
-//* Async version of standart fs module. Just for avoid using callbacks or streams
+//* Default module, async version for shorter functions
 const fs = require('fs').promises
-const { MAX_NUMBER = 1000 } = require('./config')
+//* Values can be changed
+const { MAX_NUMBER, ACCEPT_ZERO, ACCEPT_NEGATIVE, ACCEPT_SIMPLE, RESULTS_FILE } = require('./config')
 
 class Helpers {
-  //* Async write data to file
-  static saveResults = async data => await fs.writeFile('./results.txt', data)
-  //* Async read data from file
+  //^ Save results to file
+  static saveResults = async (data = '') => await fs.writeFile(`./${RESULTS_FILE}`, data)
+  //^ Read results from file. If No file, or no content, returns []
   static readResults = async () => {
     try {
-      const data = await fs.readFile('./results.txt', { encoding: 'utf8' })
-      if (data.trim()) {
+      const data = await fs.readFile(`./${RESULTS_FILE}`, { encoding: 'utf8' })
+      //^ Checking file for invalid characters. Must contain only numbers and line breaks
+      if (data.trim() && !data.match(/[^\d\n]/g)) {
         return data.split('\n')
       } else {
-        throw new Error(`No results in file`)
+        return []
       }
     } catch (err) {
-      console.error(err?.message ?? err)
+      if (ERRORS_SHOW) console.error(err?.message ?? err)
       return []
     }
   }
-  //^ Each expression can contain any integer numbers between 0 and 1000.
+  //* Simple regexp tests with numbers in expression
   static checkNumbers = str => {
     const numbers = str.match(/\d+/g)
-    //* Each expression must have minimum two numbers
-    if (!numbers || numbers.length < 2) {
-      throw new Error(`${str} -> Minimum two numbers required!`)
-    } else if (str.match(/^-\d+|\s-\d+/g)) {
-      throw new Error(`${str} -> Negative numbers are not valid`)
-    } else if (numbers.some(num => num >= MAX_NUMBER)) {
-      throw new Error(`${str} -> Numbers must be between 0 and ${MAX_NUMBER}!`)
+
+    if (!numbers) {
+      return false
+    } else if (!ACCEPT_SIMPLE && numbers.length < 2) {
+      //^ Has minimum two numbers? "2+", "+7", "56" not valid.
+      return false
+    } else if (!ACCEPT_NEGATIVE && str.match(/^-\d+|\s-\d+/g)) {
+      //^ Has negative numbers?
+      return false
+    } else if (!ACCEPT_ZERO && numbers.find(num => num == 0)) {
+      //^ Has zero
+      return false
+    } else if (numbers.find(num => num > MAX_NUMBER)) {
+      //^ Has numbers greater than MAX_NUMBER ? (1000 as default)
+      return false
     } else {
       return true
     }
   }
-  //^ Each expression can contain any of the following symbols:  ' ', '+', '-', '*', '/', '(', ')'
-  //* Expressions must have minimum two numbers and operand
   static checkExp = str => {
-    if (!str || str.length < 3) {
-      throw new Error(`${str} -> Expression must have minimum 3 chars!`)
-    } else if (str?.match(/\d{1,3}|[\s\+\-\*\/\(\)]/g)?.join('') !== str) {
-      throw new Error(`${str} -> Expression have invalid characters!`)
-    } else if (!str.match(/[\+\-\*\/]/g)) {
-      throw new Error(`${str} -> Expression must have operand!`)
+    if (!str) {
+      return false
+    } else if (str?.match(/[\d\s\+\-\*\/\(\)]/g)?.join('') !== str) {
+      return false
+    } else if (!ACCEPT_SIMPLE && !str.match(/[\+\-\*\/]/g)) {
+      return false
     } else {
       return true
     }
   }
   static evalExp = str => {
-    //* Checking numbers and characters
-    this.checkExp(str) && this.checkNumbers(str)
-
-    //* create function expression with result
-    const func = new Function('', `return ${str}`)
-    const result = func()
-
-    //* Checking result, for easy-reading checkExp()
-    if (result) {
-      return result
+    if (this.checkExp(str) && this.checkNumbers(str)) {
+      const func = new Function('', `return ${str}`)
+      return func()
     } else {
-      throw new Error(`${str} -> Invalid expression result: ${result}`)
+      throw new Error(`${str} -> Invalid expression`)
     }
   }
 }
