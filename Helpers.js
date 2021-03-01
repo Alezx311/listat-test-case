@@ -1,6 +1,4 @@
-//* Default module, async version for shorter functions
 const fs = require('fs').promises
-//* Values can be changed
 const {
   MAX_NUMBER,
   ACCEPT_ZERO,
@@ -16,8 +14,6 @@ class Helpers {
   static readResults = async () => {
     try {
       const data = await fs.readFile(`./${RESULTS_FILE}`, { encoding: 'utf8' })
-
-      //^ Checking file for invalid characters. Must contain only numbers and line breaks
       if (!data.trim()) {
         throw new Error(`Empty file!`)
       } else {
