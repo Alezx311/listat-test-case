@@ -62,9 +62,9 @@ class Helpers {
       const result = Number(func())
 
       if (RESULTS_SAVE_FLOAT) {
-        return result.toFixed(2)
+        return +result.toFixed(2)
       } else {
-        return result.toFixed(0)
+        return +result.toFixed(0)
       }
     } else {
       throw new Error(`${str} -> Invalid expression`)
