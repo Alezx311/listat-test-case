@@ -1,11 +1,12 @@
 const express = require('express')
 //^ Useful functions
-const { readResults, saveResults, evalExp } = require('./Helpers')
+const { readResults, saveResults, evalExp, randomExpression, randomExpressions } = require('./Helpers')
 //^ For debug
 const { ERRORS_SHOW } = require('./config')
 const app = express()
 
-app.use(express.json())
+app.use(express.json({ limit: '10000kb' }))
+app.use(express.urlencoded({ limit: '5000kb', extended: false }))
 
 app.get('/result', async (req, res) => {
   const results = await readResults()
@@ -32,6 +33,18 @@ app.post('/data', async (req, res) => {
     await saveResults('')
     return res.status(400).end()
   }
+})
+app.get('/random', (req, res) => {
+  const expression = randomExpression()
+  return res.status(200).json({ expression }).end()
+})
+app.get(`/random/:size`, (req, res) => {
+  const { size } = req.params
+  if (size > 100000) {
+    return res.status(413).json({ message: 'Maximum amount of expressions is 100000' }).end()
+  }
+  const expressions = randomExpressions(Number(size))
+  return res.status(200).json({ expressions }).end()
 })
 
 module.exports = app

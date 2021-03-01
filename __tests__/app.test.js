@@ -1,6 +1,7 @@
 const request = require('supertest')
 const app = require('../app')
-const { MAX_NUMBER, RESULTS_FILE } = require('../config')
+const { randomExpressions } = require('../Helpers')
+const { MAX_NUMBER } = require('../config')
 
 const expressions = ['2+2', '3-1+23', '14+45*46', '999*999*999']
 const values = {
@@ -36,6 +37,12 @@ describe('Test the /data route', () => {
   })
   it('Should response with status 200 for lot of expressions with valid integers', async () => {
     const response = await request(app).post('/data').send({ expressions: values.long })
+
+    expect(response.statusCode).toBe(200)
+  })
+  it('Should response with status 200 for large amount of expressions with valid integers', async () => {
+    const expressions = randomExpressions(100000)
+    const response = await request(app).post('/data').send({ expressions })
 
     expect(response.statusCode).toBe(200)
   })

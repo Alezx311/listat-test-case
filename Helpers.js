@@ -1,18 +1,19 @@
 //* Default module, async version for shorter functions
 const fs = require('fs').promises
 //* Values can be changed
-const { MAX_NUMBER, ACCEPT_ZERO, ACCEPT_NEGATIVE, ACCEPT_SIMPLE, RESULTS_FILE } = require('./config')
+const { MAX_NUMBER, ACCEPT_ZERO, ACCEPT_NEGATIVE, ACCEPT_SIMPLE, RESULTS_FILE, ERRORS_SHOW } = require('./config')
 
 class Helpers {
   static saveResults = async (data = '') => await fs.writeFile(`./${RESULTS_FILE}`, data)
   static readResults = async () => {
     try {
       const data = await fs.readFile(`./${RESULTS_FILE}`, { encoding: 'utf8' })
+
       //^ Checking file for invalid characters. Must contain only numbers and line breaks
-      if (data.trim() && !data.match(/[^\d\n]/g)) {
-        return data.split('\n')
+      if (!data.trim()) {
+        throw new Error(`Empty file!`)
       } else {
-        return []
+        return data.split('\n')
       }
     } catch (err) {
       if (ERRORS_SHOW) console.error(err?.message ?? err)
@@ -55,6 +56,14 @@ class Helpers {
       throw new Error(`${str} -> Invalid expression`)
     }
   }
+  static randomNumber = (min = 1, max = MAX_NUMBER) => Math.floor(Math.random() * (max - min)) + min
+  static randomExpression = () =>
+    Array(this.randomNumber(3, 20))
+      .fill(1)
+      .map(v => `${this.randomNumber()} ${'+-/*'[this.randomNumber(0, 4)]} `)
+      .join('') + this.randomNumber()
+
+  static randomExpressions = (size = 10) => Array(size).fill(1).map(this.randomExpression)
 }
 
 module.exports = Helpers

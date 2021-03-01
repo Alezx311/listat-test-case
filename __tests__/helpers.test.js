@@ -2,8 +2,42 @@ const Helpers = require('../Helpers')
 const { MAX_NUMBER, RESULTS_FILE } = require('../config')
 const fs = require('fs').promises
 
+const randomNumber = (min = 1, max = MAX_NUMBER) => Math.floor(Math.random() * (max - min)) + min
+const randomOperator = () => '-+*/'[randomNumber(0, 4)]
+const randomExpression = (size = 10) => {
+  const expSize = randomNumber(2, 10)
+  return (
+    Array(expSize)
+      .fill(1)
+      .map(v => `${randomNumber()} ${randomOperator()} `)
+      .join('') + randomNumber()
+  )
+}
+const randomExpressions = (size = 10) =>
+  Array(size)
+    .fill('')
+    .map(str => randomExpression(randomNumber(3, 20)))
+
 const readFile = async (filepath = `./${RESULTS_FILE}`) => await fs.readFile(filepath, { encoding: 'utf8' })
 
+describe('Test generate', () => {
+  it('Should generate random number', () => {
+    const result = randomNumber()
+    expect(result).toBeGreaterThan(0)
+  })
+  it('Should generate random operator', () => {
+    const result = randomOperator()
+    expect(['+', '-', '/', '*']).toContain(result)
+  })
+  it('Should generate random expression', () => {
+    const result = randomExpression()
+    expect(result).toBeTruthy()
+  })
+  it('Should generate random expressions', () => {
+    const result = randomExpressions()
+    expect(result).toBeTruthy()
+  })
+})
 describe('Test Helpers.saveResults()', () => {
   it('Should save data to file', async () => {
     await Helpers.saveResults('Hello')
@@ -32,6 +66,11 @@ describe('Test Helpers.readResults()', () => {
   })
 })
 describe('Test Helpers.checkNumbers()', () => {
+  it('Should return true on generated expressions', async () => {
+    const expressions = randomExpressions(100)
+    const results = expressions.map(Helpers.checkNumbers)
+    expect(results).toEqual(Array(100).fill(true))
+  })
   it('Should return true on valid expressions', () => {
     const results = ['2+2-1', '35-4', '34+4*3/12'].map(Helpers.checkNumbers)
     expect(results).toEqual([true, true, true])

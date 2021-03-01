@@ -2,6 +2,12 @@
 
 ### Test case for Listat Software.
 
+## Dependencies
+
+### Express.js
+
+### Jest and Supertest for tests
+
 # Prepare App
 
 ### 1. Download repository
@@ -14,31 +20,49 @@
 
 ### Run "yarn run start" or "npm run start"
 
-### Using Express.js
+## App endpoints
+
+### GET /result -> read file results.txt, and return it content
+
+### POST /data -> get array with expressions in request body, validate it, and calculate. If all expressions are valid, save results to file results.txt and returns status 200. Else, write empty string to file and returns 400
+
+### GET /random -> returns random expression. Each expressions have from 3 to 20 values, result can be float or negative
+
+### GET /random/:expSize -> returns array with expressions, useful for testing, max array size is 100000.
+
+# Performance for 100000 expressions (max size)
+
+### localhost:3110/random/100000 -> Response Time: 254 ms. Size: 6.75 MB
+
+### localhost:3110/data -> Response Time: 2.40 ms.
+
+### localhost:3110/result -> Response Time: 26 ms. Size: 1.87 MB
+
+### Full tests with generating 100000 expressions -> 5.01 s
 
 # Start Tests
 
 ### Run "yarn run start" or "npm run test"
 
 ## Coverage
-$ jest --coverage
- PASS  __tests__/app.test.js
- PASS  __tests__/helpers.test.js
+
+PASS **tests**/helpers.test.js
+PASS **tests**/app.test.js
 ------------|---------|----------|---------|---------|-------------------
-File        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+File | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 ------------|---------|----------|---------|---------|-------------------
-All files   |   89.23 |    77.78 |     100 |   91.67 |                   
- Helpers.js |   85.71 |    81.08 |     100 |   86.84 | 18-19,26,32,41    
- app.js     |   95.24 |     62.5 |     100 |     100 | 29                
- config.js  |     100 |      100 |     100 |     100 |                   
+All files | 85.37 | 75 | 86.67 | 86.67 |  
+ Helpers.js | 91.84 | 81.58 | 100 | 93.02 | 27,33,42  
+ app.js | 74.19 | 50 | 50 | 76.67 | 38-39,42-47  
+ config.js | 100 | 100 | 100 | 100 |  
 ------------|---------|----------|---------|---------|-------------------
 
 Test Suites: 2 passed, 2 total
-Tests:       28 passed, 28 total
-Snapshots:   0 total
-Time:        1.188 s
+Tests: 34 passed, 34 total
+Snapshots: 0 total
+Time: 4.56 s
 Ran all test suites.
-Done in 1.79s.
+Done in 5.10s.
 
 # Config
 
