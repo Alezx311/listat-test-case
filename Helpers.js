@@ -51,7 +51,7 @@ class Helpers {
   static evalExp = str => {
     if (this.checkExp(str) && this.checkNumbers(str)) {
       const func = new Function('', `return ${str}`)
-      return func()
+      return Number(func()).toFixed(0)
     } else {
       throw new Error(`${str} -> Invalid expression`)
     }
