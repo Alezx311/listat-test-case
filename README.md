@@ -20,9 +20,25 @@
 
 ### Run "yarn run start" or "npm run test"
 
-### For show files coverage, add --coverage after command, like "yarn run test --coverage"
+## Coverage
+$ jest --coverage
+ PASS  __tests__/app.test.js
+ PASS  __tests__/helpers.test.js
+------------|---------|----------|---------|---------|-------------------
+File        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+------------|---------|----------|---------|---------|-------------------
+All files   |   89.23 |    77.78 |     100 |   91.67 |                   
+ Helpers.js |   85.71 |    81.08 |     100 |   86.84 | 18-19,26,32,41    
+ app.js     |   95.24 |     62.5 |     100 |     100 | 29                
+ config.js  |     100 |      100 |     100 |     100 |                   
+------------|---------|----------|---------|---------|-------------------
 
-### Using Jest & Supertest
+Test Suites: 2 passed, 2 total
+Tests:       28 passed, 28 total
+Snapshots:   0 total
+Time:        1.188 s
+Ran all test suites.
+Done in 1.79s.
 
 # Config
 

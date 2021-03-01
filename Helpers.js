@@ -4,9 +4,7 @@ const fs = require('fs').promises
 const { MAX_NUMBER, ACCEPT_ZERO, ACCEPT_NEGATIVE, ACCEPT_SIMPLE, RESULTS_FILE } = require('./config')
 
 class Helpers {
-  //^ Save results to file
   static saveResults = async (data = '') => await fs.writeFile(`./${RESULTS_FILE}`, data)
-  //^ Read results from file. If No file, or no content, returns []
   static readResults = async () => {
     try {
       const data = await fs.readFile(`./${RESULTS_FILE}`, { encoding: 'utf8' })
@@ -21,23 +19,18 @@ class Helpers {
       return []
     }
   }
-  //* Simple regexp tests with numbers in expression
   static checkNumbers = str => {
     const numbers = str.match(/\d+/g)
 
     if (!numbers) {
       return false
     } else if (!ACCEPT_SIMPLE && numbers.length < 2) {
-      //^ Has minimum two numbers? "2+", "+7", "56" not valid.
       return false
     } else if (!ACCEPT_NEGATIVE && str.match(/^-\d+|\s-\d+/g)) {
-      //^ Has negative numbers?
       return false
     } else if (!ACCEPT_ZERO && numbers.find(num => num == 0)) {
-      //^ Has zero
       return false
     } else if (numbers.find(num => num > MAX_NUMBER)) {
-      //^ Has numbers greater than MAX_NUMBER ? (1000 as default)
       return false
     } else {
       return true
